@@ -89,7 +89,6 @@ public class TableBaseTest {
         Properties prop = new Properties();
 
         try {
-            //обращаемся к файлу и получаем данные
             fileInputStream = new FileInputStream(patToProps);
             prop.load(fileInputStream);
 
@@ -106,7 +105,6 @@ public class TableBaseTest {
         Properties prop = new Properties();
 
         try {
-            //обращаемся к файлу и получаем данные
             fileInputStream = new FileInputStream(patToProps);
             prop.load(fileInputStream);
 
