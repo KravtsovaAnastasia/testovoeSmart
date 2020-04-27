@@ -18,10 +18,12 @@ public class AuthBaseTest {
     private Map<String, Object> vars;
     public static final String patToProps = "src/test/resource/config.properties";
     public static String loginUrl;
+    public static String pathTodriver = "C:/Users/f0urth/IdeaProjects/geckodriver.exe";
 
     @Before
     public void setUp() {
-        System.setProperty("webdriver.gecko.driver", "C:/Users/f0urth/IdeaProjects/geckodriver.exe");
+        getDriverPath();
+        System.setProperty("webdriver.gecko.driver", pathTodriver);
         driver = new FirefoxDriver();
         js = (JavascriptExecutor) driver;
         vars = new HashMap<String, Object>();
@@ -60,6 +62,23 @@ public class AuthBaseTest {
             e.printStackTrace();
         }
     }
+
+    public void getDriverPath() {
+        FileInputStream fileInputStream;
+        Properties prop = new Properties();
+
+        try {
+            fileInputStream = new FileInputStream(patToProps);
+            prop.load(fileInputStream);
+
+            pathTodriver = prop.getProperty("geckoPath");
+
+        } catch (IOException e) {
+            System.out.println("Ошибка в программе: файл " + patToProps + " не обнаружено");
+            e.printStackTrace();
+        }
+    }
+
     protected void goToPage(String PageURL) {
         driver.get(PageURL);
     }
