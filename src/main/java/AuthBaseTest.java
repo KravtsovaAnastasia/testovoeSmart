@@ -6,19 +6,22 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class AuthBaseTest {
     protected WebDriver driver;
     JavascriptExecutor js;
     private Map<String, Object> vars;
+    public static final String patToProps = "src/test/resource/config.properties";
+    public static String loginUrl;
 
     @Before
     public void setUp() {
         System.setProperty("webdriver.gecko.driver", "C:/Users/f0urth/IdeaProjects/geckodriver.exe");
-////        FirefoxOptions options = new FirefoxOptions().addArguments("--incognito");options
-//        driver = new FirefoxDriver();
         driver = new FirefoxDriver();
         js = (JavascriptExecutor) driver;
         vars = new HashMap<String, Object>();
@@ -31,12 +34,34 @@ public class AuthBaseTest {
     }
 
     protected void login(String user, String password) {
-        driver.get("http://point3.smart-consulting.ru/");
+
+        getLoginUrl();
+        goToPage(loginUrl);
         driver.manage().window().setSize(new Dimension(885, 693));
         driver.findElement(By.id("auth-username")).clear();
         driver.findElement(By.id("auth-username")).sendKeys(user);
         driver.findElement(By.id("auth-password")).clear();
         driver.findElement(By.id("auth-password")).sendKeys(password);
         driver.findElement(By.cssSelector(".btn-primary")).click();
+    }
+
+    public void getLoginUrl() {
+        FileInputStream fileInputStream;
+        Properties prop = new Properties();
+
+        try {
+            //обращаемся к файлу и получаем данные
+            fileInputStream = new FileInputStream(patToProps);
+            prop.load(fileInputStream);
+
+            loginUrl = prop.getProperty("loginUrl");
+
+        } catch (IOException e) {
+            System.out.println("Ошибка в программе: файл " + patToProps + " не обнаружено");
+            e.printStackTrace();
+        }
+    }
+    protected void goToPage(String PageURL) {
+        driver.get(PageURL);
     }
 }

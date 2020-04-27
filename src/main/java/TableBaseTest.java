@@ -6,13 +6,19 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class TableBaseTest {
     JavascriptExecutor js;
     private WebDriver driver;
     private Map<String, Object> vars;
+    public static final String patToProps = "src/test/resource/config.properties";
+    public static String tableUrl;
+    public static String loginUrl;
 
     @Before
     public void setUp() {
@@ -26,7 +32,7 @@ public class TableBaseTest {
 
     @After
     public void tearDown() {
-        deleteLine( ".grid-row:nth-child(1) .dt-icon");
+        deleteLine(".grid-row:nth-child(1) .dt-icon");
         driver.quit();
     }
 
@@ -61,16 +67,56 @@ public class TableBaseTest {
         driver.findElement(By.cssSelector(".element-c2338469-1159-83a0-4dc7-8ca56e123187")).click();
     }
 
-    protected void goToTaskPage(String PageURL) {
+    protected void goToPage(String PageURL) {
         driver.get(PageURL);
     }
 
     private void login(String password, String user) {
-        goToTaskPage("http://point3.smart-consulting.ru/#/login/");
+
+        getLoginUrl();
+        goToPage(loginUrl);
         driver.manage().window().setSize(new Dimension(885, 694));
         driver.findElement(By.id("auth-username")).click();
         driver.findElement(By.id("auth-username")).sendKeys(user);
         driver.findElement(By.id("auth-password")).sendKeys(password);
         driver.findElement(By.cssSelector(".btn-primary")).click();
+        getTableUrl();
+        goToPage(tableUrl);
     }
+
+    public void getTableUrl() {
+        FileInputStream fileInputStream;
+        Properties prop = new Properties();
+
+        try {
+            //обращаемся к файлу и получаем данные
+            fileInputStream = new FileInputStream(patToProps);
+            prop.load(fileInputStream);
+
+            tableUrl = prop.getProperty("tableUrl");
+
+        } catch (IOException e) {
+            System.out.println("Ошибка в программе: файл " + patToProps + " не обнаружено");
+            e.printStackTrace();
+        }
+    }
+
+    public void getLoginUrl() {
+        FileInputStream fileInputStream;
+        Properties prop = new Properties();
+
+        try {
+            //обращаемся к файлу и получаем данные
+            fileInputStream = new FileInputStream(patToProps);
+            prop.load(fileInputStream);
+
+            loginUrl = prop.getProperty("loginUrl");
+
+        } catch (IOException e) {
+            System.out.println("Ошибка в программе: файл " + patToProps + " не обнаружено");
+            e.printStackTrace();
+        }
+    }
+    
+    
 }
